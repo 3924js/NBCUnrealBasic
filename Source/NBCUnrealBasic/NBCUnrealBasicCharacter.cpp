@@ -131,7 +131,6 @@ void ANBCUnrealBasicCharacter::Tick(float DeltaTime)
 			CurrentRecoil = FMath::FInterpTo(CurrentRecoil, TargetRecoil, DeltaTime, RecoilApplyRate);
 		}
 		if (FMath::IsNearlyEqual(CurrentRecoil, TargetRecoil, 1.0f)) TargetRecoil = 0;
-		UE_LOG(LogTemp, Warning, TEXT("Recoil change: %f"), PrevRecoil - CurrentRecoil);
 		AddControllerPitchInput(PrevRecoil - CurrentRecoil);
 	}
 }

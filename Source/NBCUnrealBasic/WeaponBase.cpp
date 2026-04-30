@@ -5,6 +5,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Engine/DamageEvents.h"
 // Sets default values
 AWeaponBase::AWeaponBase()
 {
@@ -37,11 +38,14 @@ void AWeaponBase::UseWeapon(FVector FireLocation, FVector FireVector)
 			FLinearColor::Green,
 			2.0f);
 		if (bHit && IsValid(HitResult.GetActor())) {
-			float DamageToApply =
-				HitResult.Distance < (MaxDamageDistance) ?
+			float DamageToApply = HitResult.Distance < (MaxDamageDistance) ?
 				DamagePerBullet :
-				FMath::Max(0, DamagePerBullet-DamageAttenuationRate * HitResult.Distance);
-			UGameplayStatics::ApplyDamage(HitResult.GetActor(), DamageToApply,nullptr, Owner, UDamageType::StaticClass());
+				FMath::Max(0, DamagePerBullet - DamageAttenuationRate * HitResult.Distance);
+			UE_LOG(LogTemp, Warning, TEXT("Applying %f Damage to %s !"), DamageToApply, *HitResult.GetActor()->GetName());
+
+			
+			float temp = UGameplayStatics::ApplyDamage(HitResult.GetActor(), DamageToApply, Cast<APawn>(Owner)->GetController(), Owner, UDamageType::StaticClass());
+			UE_LOG(LogTemp, Warning, TEXT("returned damage to %f !"), temp);
 		}
 	}
 }
