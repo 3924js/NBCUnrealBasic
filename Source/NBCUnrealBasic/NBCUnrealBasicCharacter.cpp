@@ -93,6 +93,10 @@ void ANBCUnrealBasicCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Firing
 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ANBCUnrealBasicCharacter::Fire);
+
+		// Aiming
+		EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Started, this, &ANBCUnrealBasicCharacter::ZoomIn);
+		EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Completed, this, &ANBCUnrealBasicCharacter::ZoomOut);
 	}
 	else
 	{
@@ -117,6 +121,8 @@ void ANBCUnrealBasicCharacter::BeginPlay()
 	}
 	TargetRecoil = 0.0f;
 	CurrentRecoil = 0.0f;
+	OriginalZoomDistance = CameraBoom->TargetArmLength;
+	OriginalFOV = FollowCamera->FieldOfView;
 }
 
 void ANBCUnrealBasicCharacter::Tick(float DeltaTime)
@@ -176,7 +182,7 @@ void ANBCUnrealBasicCharacter::Fire(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Warning, TEXT("Fire Input!"));
 	if (IsValid(CurrentWeapon)) {
 		UE_LOG(LogTemp, Warning, TEXT("CurrentWeapon exists!"));
-		CurrentWeapon->UseWeapon(GetActorLocation(), FollowCamera->GetForwardVector());
+		CurrentWeapon->UseWeapon();
 		if (CurrentWeapon->HasRecoil()) ApplyRecoil();
 	}
 	else {
@@ -190,4 +196,18 @@ void ANBCUnrealBasicCharacter::ApplyRecoil()
 	if (!IsValid(CurrentWeapon) ) return;
 	if (!CurrentWeapon->HasRecoil()) return;
 	TargetRecoil += CurrentWeapon->GetRecoilPerShot();
+}
+
+void ANBCUnrealBasicCharacter::ZoomIn(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ZoomIn Called!"));
+	CameraBoom->TargetArmLength *= ZoomDistanceRatio;
+	FollowCamera->FieldOfView *= ZoomFOVRatio;
+}
+
+void ANBCUnrealBasicCharacter::ZoomOut(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("ZoomOut Called!"));
+	CameraBoom->TargetArmLength = OriginalZoomDistance;
+	FollowCamera->FieldOfView = OriginalFOV;
 }

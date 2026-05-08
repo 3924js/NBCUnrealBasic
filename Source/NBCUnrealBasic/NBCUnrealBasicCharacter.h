@@ -45,9 +45,13 @@ class ANBCUnrealBasicCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
-	/** Look Input Action */
+	/** Fire Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireAction;
+
+	/** Zoom Input Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ZoomAction;
 public:
 	ANBCUnrealBasicCharacter();
 	
@@ -79,6 +83,16 @@ protected:
 	float RecoilApplyRate;	//How fast to reach the target recoil rate
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 	float RecoilRecoveryRate;	//how fast to recover the recoiled rotation.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float ZoomDistanceRatio;	//How much to zoom
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+	float ZoomFOVRatio;	//How much to zoom
+
+
+	void ZoomIn(const FInputActionValue& Value);
+	void ZoomOut(const FInputActionValue& Value);
+	float OriginalZoomDistance;
+	float OriginalFOV;
 			
 
 protected:
